@@ -36,14 +36,22 @@ class Roketki(GameSprite):
 
 raketka1 = Roketki('roketka-l.png', 10, 20, 50, 80, 15)
 raketka2 = Roketki('roketka-r.png', 640, 320, 50, 80, 15)
+ball = GameSprite('ball.png', 300, 250)
+ball.speed_x = ball.speed
+ball.speed_y = ball.speed
+
+font.init()
+font1 = font.SysFont('Arial', 36)
+lose1 = font1.render("Первый игрок (слева) проиграл!", 1, (255, 0, 0)) 
+lose2 = font1.render("Второй игрок (справа) проигал!", 1, (255, 0, 0)) 
 
 game = True
-
+finish = False
 while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
-    
+        
     window.fill((0, 130, 144))
     raketka1.reset()
     raketka1.update_l()
@@ -51,5 +59,25 @@ while game:
     raketka2.reset()
     raketka2.update_r()
 
+    ball.reset()
+    if not finish:
+        ball.rect.x += ball.speed_x
+        ball.rect.y += ball.speed_y
+    if ball.rect.y > h-65 or ball.rect.y < 0:
+        ball.speed_y *= -1
+    if sprite.collide_rect(ball, raketka2) or sprite.collide_rect(ball, raketka1):
+        ball.speed_x *= -1
+
+    if ball.rect.x < 0:
+        finish = True
+        window.blit(lose1, (100,200))
+
+    if ball.rect.x > w-65:
+        finish = True
+        window.blit(lose2, (100,200))
+
+    
+
+
     display.update()
-    time.delay(50)
+    time.delay(15)
